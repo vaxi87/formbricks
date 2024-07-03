@@ -96,7 +96,7 @@ const ResponseSurveyCard = ({
   const { isViewer } = getAccessFlags(membershipRole);
 
   return (
-    <div key={response.id}>
+    <div key={response.id} className="w-full">
       {survey && (
         <SingleResponseCard
           response={response}

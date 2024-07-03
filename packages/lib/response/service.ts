@@ -752,6 +752,18 @@ export const updateResponse = async (
   }
 };
 
+export const updateResponseEmbedding = async (id: string, embedding: number[]) => {
+  validateInputs([id, ZId]);
+  // Convert the embedding array to a string representation that PostgreSQL understands
+  const embeddingString = `[${embedding.join(",")}]`;
+
+  await prisma.$executeRaw`
+    UPDATE "Response"
+    SET "embedding" = ${embeddingString}::vector(1536)
+    WHERE "id" = ${id};
+  `;
+};
+
 export const deleteResponse = async (responseId: string): Promise<TResponse> => {
   validateInputs([responseId, ZId]);
   try {
@@ -823,3 +835,47 @@ export const getResponseCountBySurveyId = (
       tags: [responseCache.tag.bySurveyId(surveyId)],
     }
   )();
+
+export const findNearestResponses = async (
+  environmentId: string,
+  embedding: number[],
+  limit: number = 5
+): Promise<TResponse[]> => {
+  validateInputs([environmentId, ZId]);
+  const threshold = 0.7; //0.2;
+  // Convert the embedding array to a JSON-like string representation
+  const embeddingString = `[${embedding.join(",")}]`;
+
+  // Execute raw SQL query to find nearest neighbors and exclude the vector column
+  const nearestNeighborIds: { id: string }[] = await prisma.$queryRaw`
+    SELECT r.id
+    FROM "Response" r
+    INNER JOIN "Survey" s ON r."surveyId" = s.id
+    WHERE s."environmentId" = ${environmentId}
+      AND r."embedding" <=> ${embeddingString}::vector(1536) <= ${threshold}
+    ORDER BY r."embedding" <=> ${embeddingString}::vector(1536)
+    LIMIT ${limit};
+  `;
+
+  if (nearestNeighborIds.length === 0) {
+    return [];
+  }
+
+  const responses = await prisma.response.findMany({
+    where: {
+      id: { in: nearestNeighborIds.map(({ id }) => id) },
+    },
+    select: responseSelection,
+  });
+
+  const transformedResponses: TResponse[] = await Promise.all(
+    responses.map((responsePrisma) => {
+      return {
+        ...responsePrisma,
+        tags: responsePrisma.tags.map((tagPrisma: { tag: TTag }) => tagPrisma.tag),
+      };
+    })
+  );
+
+  return transformedResponses;
+};

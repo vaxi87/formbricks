@@ -6,6 +6,7 @@ import FBLogo from "@/images/formbricks-wordmark.svg";
 import {
   ArrowUpRightIcon,
   BlocksIcon,
+  BotIcon,
   ChevronRightIcon,
   Cog,
   CreditCardIcon,
@@ -131,6 +132,13 @@ export const MainNavigation = ({
 
   const mainNavigation = useMemo(
     () => [
+      {
+        name: "Insights",
+        href: `/environments/${environment.id}/insights`,
+        icon: BotIcon,
+        isActive: pathname?.includes("/insights"),
+        isHidden: false,
+      },
       {
         name: "Surveys",
         href: `/environments/${environment.id}/surveys`,

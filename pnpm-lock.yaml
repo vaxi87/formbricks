@@ -595,6 +595,9 @@ importers:
       dotenv-cli:
         specifier: ^7.4.2
         version: 7.4.2
+      pgvector:
+        specifier: ^0.2.0
+        version: 0.2.0
     devDependencies:
       '@formbricks/config-typescript':
         specifier: workspace:*
@@ -9373,6 +9376,10 @@ packages:
   pg-types@2.2.0:
     resolution: {integrity: sha512-qTAAlrEsl8s4OiEQY69wDvcMIdQN6wdz5ojQiOy6YRMuynxenON0O5oCpJI6lshc6scgAY8qvJ2On/p+CXY0GA==}
     engines: {node: '>=4'}
+
+  pgvector@0.2.0:
+    resolution: {integrity: sha512-ef9SggYLzgshzpsFHAha77ghSOucf1ebXcuvokgTQK6V01uihqGJv6i0+U+yjEgiDsiVtTdojDrqOHRcSmcECw==}
+    engines: {node: '>= 18'}
 
   picocolors@1.0.1:
     resolution: {integrity: sha512-anP1Z8qwhkbmu7MFP5iTt+wQKXgwzf7zTyGlcdzabySa9vd0Xt392U0rVmz9poOaBj0uHJKyyo9/upk0HrEQew==}
@@ -22831,6 +22838,8 @@ snapshots:
       postgres-bytea: 1.0.0
       postgres-date: 1.0.7
       postgres-interval: 1.2.0
+
+  pgvector@0.2.0: {}
 
   picocolors@1.0.1: {}
 

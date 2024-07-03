@@ -113,7 +113,7 @@ export const SingleResponseCardHeader = ({
   const deleteSubmissionToolTip = <>This response is in progress.</>;
 
   return (
-    <div className="space-y-2 border-b border-slate-200 px-6 pb-4 pt-4">
+    <div className="w-full space-y-2 border-b border-slate-200 px-6 pb-4 pt-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center justify-center space-x-4">
           {pageType === "response" && (

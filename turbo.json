@@ -112,6 +112,7 @@
         "OIDC_DISPLAY_NAME",
         "OIDC_ISSUER",
         "OIDC_SIGNING_ALGORITHM",
+        "OPENAI_API_KEY",
         "PASSWORD_RESET_DISABLED",
         "PLAYWRIGHT_CI",
         "PRIVACY_URL",

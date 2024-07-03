@@ -6,10 +6,12 @@ import { sendResponseFinishedEmail } from "@formbricks/email";
 import { INTERNAL_SECRET } from "@formbricks/lib/constants";
 import { getIntegrations } from "@formbricks/lib/integration/service";
 import { getProductByEnvironmentId } from "@formbricks/lib/product/service";
-import { getResponseCountBySurveyId } from "@formbricks/lib/response/service";
+import { getResponseCountBySurveyId, updateResponseEmbedding } from "@formbricks/lib/response/service";
+import { generateResponseEmbedding } from "@formbricks/lib/response/utils";
 import { getSurvey, updateSurvey } from "@formbricks/lib/survey/service";
 import { convertDatesInObject } from "@formbricks/lib/time";
 import { ZPipelineInput } from "@formbricks/types/pipelines";
+import { TSurvey } from "@formbricks/types/surveys";
 import { TUserNotificationSettings } from "@formbricks/types/user";
 import { handleIntegrations } from "./lib/handleIntegrations";
 
@@ -99,11 +101,14 @@ export const POST = async (request: Request) => {
       },
     });
 
-    const [integrations, surveyData] = await Promise.all([
-      getIntegrations(environmentId),
-      getSurvey(surveyId),
-    ]);
-    const survey = surveyData ?? undefined;
+    const [integrations, survey] = await Promise.all([getIntegrations(environmentId), getSurvey(surveyId)]);
+
+    if (!survey) {
+      console.error(`Pipeline: Survey with id ${surveyId} not found`);
+      return new Response("Survey not found", {
+        status: 404,
+      });
+    }
 
     if (integrations.length > 0 && survey) {
       handleIntegrations(integrations, inputValidation.data, survey);
@@ -134,10 +139,7 @@ export const POST = async (request: Request) => {
         })
       );
     }
-    const updateSurveyStatus = async (surveyId: string) => {
-      // Get the survey instance by surveyId
-      const survey = await getSurvey(surveyId);
-
+    const updateSurveyStatus = async (survey: TSurvey) => {
       if (survey?.autoComplete) {
         // Get the number of responses to a survey
         const responseCount = await prisma.response.count({
@@ -153,7 +155,11 @@ export const POST = async (request: Request) => {
       }
     };
 
-    await updateSurveyStatus(surveyId);
+    await updateSurveyStatus(survey);
+
+    // update response embedding
+    const embedding = await generateResponseEmbedding(survey, response);
+    await updateResponseEmbedding(response.id, embedding);
   }
 
   return Response.json({ data: {} });

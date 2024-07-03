@@ -1,5 +1,6 @@
 import "server-only";
 import { Prisma } from "@prisma/client";
+import { TEmbedding } from "@formbricks/types/embedding";
 import {
   TResponse,
   TResponseFilterCriteria,
@@ -23,6 +24,7 @@ import {
   TSurveyQuestionTypeEnum,
   TSurveySummary,
 } from "@formbricks/types/surveys";
+import { generateEmbedding } from "../embedding/service";
 import { getLocalizedValue } from "../i18n/utils";
 import { processResponseData } from "../responses";
 import { getTodaysDateTimeFormatted } from "../time";
@@ -1321,4 +1323,25 @@ export const getResponseHiddenFields = (
   } catch (error) {
     throw error;
   }
+};
+
+export const generateResponseEmbedding = async (
+  survey: TSurvey,
+  response: TResponse
+): Promise<TEmbedding> => {
+  // generate text representation of response
+  let text = "";
+  /*   survey.questions.forEach((question) => {
+    const answer = response.data[question.id];
+    if (answer) {
+      text += `${question.headline}: ${answer}\n`;
+    }
+  }); */
+  Object.entries(response.data).forEach(([_, value]) => {
+    text += `${value}\n`;
+  });
+
+  // generate embedding
+  const embedding = await generateEmbedding(text);
+  return embedding;
 };
