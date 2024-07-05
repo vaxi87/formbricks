@@ -158,7 +158,7 @@ export const POST = async (request: Request) => {
     await updateSurveyStatus(survey);
 
     // update response embedding
-    const embedding = await generateResponseEmbedding(survey, response);
+    const embedding = await generateResponseEmbedding(response);
     await updateResponseEmbedding(response.id, embedding);
   }
 

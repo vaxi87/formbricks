@@ -1334,10 +1334,7 @@ export const responseToText = (response: TResponse): string => {
   return text;
 };
 
-export const generateResponseEmbedding = async (
-  survey: TSurvey,
-  response: TResponse
-): Promise<TEmbedding> => {
+export const generateResponseEmbedding = async (response: TResponse): Promise<TEmbedding> => {
   // generate text representation of response
   let text = "";
   /*   survey.questions.forEach((question) => {

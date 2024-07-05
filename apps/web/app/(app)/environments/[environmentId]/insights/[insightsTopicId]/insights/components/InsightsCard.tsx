@@ -5,8 +5,8 @@ import { Insight } from "@/app/(app)/environments/[environmentId]/insights/[insi
 import { SparkleIcon } from "lucide-react";
 import type { Session } from "next-auth";
 import { useState } from "react";
+import { TCluster } from "@formbricks/ee/insights/types/insightsTopics";
 import { TEnvironment } from "@formbricks/types/environment";
-import { TResponse } from "@formbricks/types/responses";
 import { TSurvey } from "@formbricks/types/surveys";
 import { Alert, AlertDescription, AlertTitle } from "@formbricks/ui/Alert";
 import { Button } from "@formbricks/ui/Button";
@@ -19,22 +19,14 @@ interface InsightsCardProps {
   session: Session;
 }
 
-interface Cluster {
-  insight: {
-    headline: string;
-    description: string;
-  } | null;
-  examples: TResponse[];
-}
-
 export const InsightsCard = ({ environment, session, insightsTopicId, surveys }: InsightsCardProps) => {
-  const [insights, setInsights] = useState<Cluster[]>([]);
+  const [insights, setInsights] = useState<TCluster[]>([]);
   const [loading, setLoading] = useState(false);
 
   const generateInsights = async () => {
     setLoading(true);
-    const insights = await generateInsightsAction(environment.id, insightsTopicId);
-    setInsights(insights);
+    const newInsights = await generateInsightsAction(environment.id, insightsTopicId);
+    setInsights(newInsights);
     setLoading(false);
   };
 

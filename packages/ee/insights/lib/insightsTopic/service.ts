@@ -122,7 +122,7 @@ export const getInsightsTopicEmbedding = async (id: string): Promise<number[]> =
       validateInputs([id, ZId]);
 
       // Fetch the embedding from the database
-      const result = await prisma.$queryRaw`
+      const result: { embedding: string }[] = await prisma.$queryRaw`
   SELECT "embedding"::text AS embedding
   FROM "InsightsTopic"
   WHERE "id" = ${id};
@@ -170,7 +170,7 @@ export const findNearestInsightsTopic = async (
   const embeddingString = `[${embedding.join(",")}]`;
 
   // Execute raw SQL query to find nearest neighbors and exclude the vector column
-  const nearestNeighborIds = await prisma.$queryRaw`
+  const nearestNeighborIds: { id: string }[] = await prisma.$queryRaw`
     SELECT id
     FROM "InsightsTopic"
     WHERE "environmentId" = ${environmentId}
@@ -242,7 +242,7 @@ export const getInsightsTopicClusters = async (environmentId: string, insightsTo
               description: z.string(),
             }),
           }),
-          prompt: `I collected survey responses for the topic "${insightsTopic.name} (${insightsTopic.description})". Please summarize the following feedback in one sentence as a description and add a headline highlighting the key point: ${cluster.examples.map((example) => `"${responseToText(example)}"`).join(", ")}`,
+          prompt: `I collected survey responses for the topic "${insightsTopic?.name} (${insightsTopic?.description})". Please summarize the following feedback in one sentence as a description and add a headline highlighting the key point: ${cluster.examples.map((example) => `"${responseToText(example)}"`).join(", ")}`,
         });
 
         cluster.insight = object.insight;

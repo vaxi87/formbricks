@@ -1,14 +1,9 @@
 import { InsightsTopicTabs } from "@/app/(app)/environments/[environmentId]/insights/[insightsTopicId]/components/InsightsTopicTabs";
 import { InsightsCard } from "@/app/(app)/environments/[environmentId]/insights/[insightsTopicId]/insights/components/InsightsCard";
 import { getServerSession } from "next-auth";
-import {
-  getInsightsTopic,
-  getInsightsTopicEmbedding,
-  getInsightsTopics,
-} from "@formbricks/ee/insights/lib/insightsTopic/service";
+import { getInsightsTopic, getInsightsTopics } from "@formbricks/ee/insights/lib/insightsTopic/service";
 import { authOptions } from "@formbricks/lib/authOptions";
 import { getEnvironment } from "@formbricks/lib/environment/service";
-import { findNearestResponses } from "@formbricks/lib/response/service";
 import { getSurveys } from "@formbricks/lib/survey/service";
 import { AuthenticationError } from "@formbricks/types/errors";
 import { PageContentWrapper } from "@formbricks/ui/PageContentWrapper";
@@ -41,9 +36,6 @@ const InsightsPage = async ({ params }: InsightsPageProps) => {
   if (!insightsTopic) {
     throw new Error("Insights topic not found");
   }
-
-  const insightsTopicEmbedding = await getInsightsTopicEmbedding(params.insightsTopicId);
-  const responses = await findNearestResponses(params.environmentId, insightsTopicEmbedding, 10);
 
   return (
     <PageContentWrapper>

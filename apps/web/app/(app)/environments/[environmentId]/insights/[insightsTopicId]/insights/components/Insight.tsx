@@ -5,21 +5,13 @@ import * as Collapsible from "@radix-ui/react-collapsible";
 import { SparklesIcon } from "lucide-react";
 import type { Session } from "next-auth";
 import { useState } from "react";
+import { TCluster } from "@formbricks/ee/insights/types/insightsTopics";
 import { cn } from "@formbricks/lib/cn";
 import { TEnvironment } from "@formbricks/types/environment";
-import { TResponse } from "@formbricks/types/responses";
 import { TSurvey } from "@formbricks/types/surveys";
 
-interface Cluster {
-  insight: {
-    headline: string;
-    description: string;
-  } | null;
-  examples: TResponse[];
-}
-
 interface InsightProps {
-  cluster: Cluster;
+  cluster: TCluster;
   environment: TEnvironment;
   session: Session;
   surveys: TSurvey[];

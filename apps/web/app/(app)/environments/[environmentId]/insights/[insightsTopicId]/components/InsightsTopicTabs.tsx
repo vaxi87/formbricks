@@ -1,5 +1,4 @@
 import { getProductByEnvironmentId } from "@formbricks/lib/product/service";
-import { TProductConfigChannel } from "@formbricks/types/product";
 import { SecondaryNavigation } from "@formbricks/ui/SecondaryNavigation";
 
 interface InsightsTopicSubnavigationProps {
@@ -15,16 +14,12 @@ export const InsightsTopicTabs = async ({
   insightsTopicId,
   loading,
 }: InsightsTopicSubnavigationProps) => {
-  let currentProductChannel: TProductConfigChannel = null;
-
   if (!loading && environmentId) {
     const product = await getProductByEnvironmentId(environmentId);
 
     if (!product) {
       throw new Error("Product not found");
     }
-
-    currentProductChannel = product.config.channel ?? null;
   }
 
   const navigation = [
