@@ -45,7 +45,7 @@ export const InsightsTopicNavigation = ({
           {insightsTopics.map((item) => (
             <li key={item.name}>
               <Link
-                href={`/environments/${environmentId}/insights/${item.id}`}
+                href={`/environments/${environmentId}/insights/${item.id}/responses`}
                 className={clsx(
                   item.id === insightsTopicId
                     ? "bg-gray-50 text-teal-600"

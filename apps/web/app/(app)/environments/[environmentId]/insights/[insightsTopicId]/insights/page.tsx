@@ -1,4 +1,5 @@
-import { ResponseFeed } from "@/app/(app)/environments/[environmentId]/(people)/people/[personId]/components/ResponsesFeed";
+import { InsightsTopicTabs } from "@/app/(app)/environments/[environmentId]/insights/[insightsTopicId]/components/InsightsTopicTabs";
+import { InsightsCard } from "@/app/(app)/environments/[environmentId]/insights/[insightsTopicId]/insights/components/InsightsCard";
 import { getServerSession } from "next-auth";
 import {
   getInsightsTopic,
@@ -12,8 +13,8 @@ import { getSurveys } from "@formbricks/lib/survey/service";
 import { AuthenticationError } from "@formbricks/types/errors";
 import { PageContentWrapper } from "@formbricks/ui/PageContentWrapper";
 import { PageHeader } from "@formbricks/ui/PageHeader";
-import { InsightsTopicNavigation } from "../components/InsightsTopicNavigation";
-import { DeleteInsightsTopicButton } from "./components/DeleteInsightsTopicButton";
+import { InsightsTopicNavigation } from "../../components/InsightsTopicNavigation";
+import { DeleteInsightsTopicButton } from "../components/DeleteInsightsTopicButton";
 
 interface InsightsPageProps {
   params: {
@@ -62,15 +63,18 @@ const InsightsPage = async ({ params }: InsightsPageProps) => {
                 insightsTopicId={params.insightsTopicId}
                 environmentId={params.environmentId}
               />
-            }
-          />
-          <ResponseFeed
-            surveys={surveys}
-            user={session.user}
-            responses={responses}
+            }>
+            <InsightsTopicTabs
+              environmentId={params.environmentId}
+              insightsTopicId={params.insightsTopicId}
+              activeId="insights"
+            />
+          </PageHeader>
+          <InsightsCard
             environment={environment}
-            environmentTags={[]}
-            attributeClasses={[]}
+            insightsTopicId={params.insightsTopicId}
+            surveys={surveys}
+            session={session}
           />
         </div>
       </div>

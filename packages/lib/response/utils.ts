@@ -1325,6 +1325,15 @@ export const getResponseHiddenFields = (
   }
 };
 
+export const responseToText = (response: TResponse): string => {
+  let text = "";
+  Object.entries(response.data).forEach(([_, value]) => {
+    text += `${value}\n`;
+  });
+
+  return text;
+};
+
 export const generateResponseEmbedding = async (
   survey: TSurvey,
   response: TResponse

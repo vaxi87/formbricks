@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "@formbricks/database";
 import { TAttributes } from "@formbricks/types/attributes";
 import { ZOptionalNumber, ZString } from "@formbricks/types/common";
+import { TEmbedding } from "@formbricks/types/embedding";
 import { ZId } from "@formbricks/types/environment";
 import { DatabaseError, ResourceNotFoundError } from "@formbricks/types/errors";
 import { TPerson } from "@formbricks/types/people";
@@ -878,4 +879,41 @@ export const findNearestResponses = async (
   );
 
   return transformedResponses;
+};
+
+interface EmbeddingObject {
+  id: string;
+  embedding: TEmbedding;
+}
+
+export const findNearestEmbeddingObjects = async (
+  environmentId: string,
+  embedding: number[],
+  limit: number = 5
+): Promise<EmbeddingObject[]> => {
+  validateInputs([environmentId, ZId]);
+  const threshold = 0.7; //0.2;
+  // Convert the embedding array to a JSON-like string representation
+  const embeddingString = `[${embedding.join(",")}]`;
+
+  // Execute raw SQL query to find nearest neighbors and exclude the vector column
+  const nearestNeighbors: any[] = await prisma.$queryRaw`
+    SELECT r.id, r."embedding"::text AS embedding
+    FROM "Response" r
+    INNER JOIN "Survey" s ON r."surveyId" = s.id
+    WHERE s."environmentId" = ${environmentId}
+      AND r."embedding" <=> ${embeddingString}::vector(1536) <= ${threshold}
+    ORDER BY r."embedding" <=> ${embeddingString}::vector(1536)
+    LIMIT ${limit};
+  `;
+
+  // Map the results back to the original embeddings
+  nearestNeighbors.forEach((neighbor) => {
+    neighbor.embedding = neighbor.embedding
+      .slice(1, -1) // Remove the surrounding square brackets
+      .split(",") // Split the string into an array of strings
+      .map(Number); // Convert each string to a number
+  });
+
+  return nearestNeighbors;
 };

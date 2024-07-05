@@ -1,11 +1,20 @@
 import "server-only";
+import { openai } from "@ai-sdk/openai";
 import { Prisma } from "@prisma/client";
+import { generateObject } from "ai";
+import { z } from "zod";
 import { prisma } from "@formbricks/database";
 import { cache } from "@formbricks/lib/cache";
+import { clusterEmbeddings } from "@formbricks/lib/embedding/service";
+import { responseCache } from "@formbricks/lib/response/cache";
+import { findNearestEmbeddingObjects, getResponse } from "@formbricks/lib/response/service";
+import { responseToText } from "@formbricks/lib/response/utils";
 import { validateInputs } from "@formbricks/lib/utils/validate";
 import { ZId } from "@formbricks/types/environment";
 import { DatabaseError } from "@formbricks/types/errors";
+import { TResponse } from "@formbricks/types/responses";
 import {
+  TCluster,
   TInsightsTopic,
   TInsightsTopicCreateInput,
   ZInsightsTopicCreateInput,
@@ -199,3 +208,50 @@ export const deleteInsightsTopic = async (id: string): Promise<TInsightsTopic | 
     throw error;
   }
 };
+
+export const getInsightsTopicClusters = async (environmentId: string, insightsTopicId: string) =>
+  cache(
+    async () => {
+      const insightsTopic = await getInsightsTopic(insightsTopicId);
+      // Get all embeddings from the insightsTopic reponses
+      const insightsTopicEmbeddings = await getInsightsTopicEmbedding(insightsTopicId);
+      const embeddingObjects = await findNearestEmbeddingObjects(environmentId, insightsTopicEmbeddings, 10);
+      const clusteringOutput = await clusterEmbeddings(embeddingObjects, 3);
+
+      const clusters: TCluster[] = [];
+
+      // build a cluster object with two examples from each cluster
+      for (let i = 0; i < 3; i++) {
+        const exampleIds = clusteringOutput
+          .filter((cluster) => cluster.cluster === i)
+          .slice(0, 2)
+          .map((cluster) => cluster.id);
+        const responses = await Promise.all(exampleIds.map((id) => getResponse(id)));
+        const filteredResponses = responses.filter((response) => response !== null) as TResponse[];
+        clusters.push({ insight: null, examples: filteredResponses });
+      }
+      // generate insights for every cluster by an LLM
+      for (const cluster of clusters) {
+        // generate insights
+        // generate examples for insights topic
+        const { object } = await generateObject({
+          model: openai("gpt-4-turbo"),
+          schema: z.object({
+            insight: z.object({
+              headline: z.string(),
+              description: z.string(),
+            }),
+          }),
+          prompt: `I collected survey responses for the topic "${insightsTopic.name} (${insightsTopic.description})". Please summarize the following feedback in one sentence as a description and add a headline highlighting the key point: ${cluster.examples.map((example) => `"${responseToText(example)}"`).join(", ")}`,
+        });
+
+        cluster.insight = object.insight;
+      }
+
+      return clusters;
+    },
+    [`getInsightsTopicClusters-${environmentId}-${insightsTopicId}`],
+    {
+      tags: [insightsTopicCache.tag.byId(insightsTopicId), responseCache.tag.byEnvironmentId(environmentId)],
+    }
+  )();

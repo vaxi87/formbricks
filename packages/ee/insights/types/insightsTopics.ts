@@ -1,4 +1,5 @@
 import z from "zod";
+import { TResponse } from "@formbricks/types/responses";
 
 export const ZInsightsTopic = z.object({
   id: z.string(),
@@ -17,3 +18,11 @@ export const ZInsightsTopicCreateInput = z.object({
 });
 
 export type TInsightsTopicCreateInput = z.infer<typeof ZInsightsTopicCreateInput>;
+
+export interface TCluster {
+  insight: {
+    headline?: string;
+    description?: string;
+  } | null;
+  examples: TResponse[];
+}

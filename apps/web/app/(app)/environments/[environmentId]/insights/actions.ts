@@ -1,6 +1,9 @@
 "use server";
 
+import { openai } from "@ai-sdk/openai";
+import { generateObject } from "ai";
 import { getServerSession } from "next-auth";
+import { z } from "zod";
 import {
   createInsightsTopic,
   updateInsightsTopicEmbedding,
@@ -55,6 +58,18 @@ export const createInsightsTopicAction = async (
     throw new AuthorizationError("Not authorized");
   }
   const insightsTopic = await createInsightsTopic(environmentId, insightsTopicInput);
-  const embedding = await generateEmbedding(`${insightsTopic.name}: ${insightsTopic.description}`);
+
+  // generate examples for insights topic
+  const { object } = await generateObject({
+    model: openai("gpt-4-turbo"),
+    schema: z.object({
+      examples: z.array(z.string()),
+    }),
+    prompt: `Generate 3 example feedbacks users could give in my survey XM app for the feedback category ${insightsTopic.name} (${insightsTopic.description})`,
+  });
+
+  const examplesString = object.examples.join("\n");
+
+  const embedding = await generateEmbedding(examplesString);
   await updateInsightsTopicEmbedding(insightsTopic.id, embedding);
 };
