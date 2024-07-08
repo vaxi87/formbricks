@@ -843,7 +843,7 @@ export const findNearestResponses = async (
   limit: number = 5
 ): Promise<TResponse[]> => {
   validateInputs([environmentId, ZId]);
-  const threshold = 0.7; //0.2;
+  const threshold = 0.6; //0.2;
   // Convert the embedding array to a JSON-like string representation
   const embeddingString = `[${embedding.join(",")}]`;
 
