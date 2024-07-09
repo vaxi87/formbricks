@@ -89,7 +89,7 @@ ENV HOSTNAME "0.0.0.0"
 USER nextjs
 
 # Prepare volume for uploads
-RUN mkdir -p /home/nextjs/apps/web/uploads/
+RUN mkdir -p /home/nextjs/apps/web/uploads/ && chown -R nextjs:nextjs /home/nextjs/apps/web/uploads/
 VOLUME /home/nextjs/apps/web/uploads/
 
 CMD supercronic -quiet /app/docker/cronjobs & \
