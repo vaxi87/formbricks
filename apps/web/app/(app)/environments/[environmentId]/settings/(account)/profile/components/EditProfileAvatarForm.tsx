@@ -72,6 +72,7 @@ export const EditProfileAvatarForm = ({ session, environmentId }: EditProfileAva
       await updateAvatarAction(url);
       router.refresh();
     } catch (err) {
+      console.log(err);
       toast.error("Avatar update failed. Please try again.");
       setIsLoading(false);
     }
@@ -85,6 +86,7 @@ export const EditProfileAvatarForm = ({ session, environmentId }: EditProfileAva
     try {
       await removeAvatarAction(environmentId);
     } catch (err) {
+      console.log(err);
       toast.error("Avatar update failed. Please try again.");
     } finally {
       setIsLoading(false);
