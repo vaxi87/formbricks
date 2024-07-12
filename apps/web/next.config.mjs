@@ -176,13 +176,18 @@ if (process.env.WEBAPP_URL) {
   nextConfig.experimental.serverActions = {
     allowedOrigins: [process.env.WEBAPP_URL.replace(/https?:\/\//, "")],
   };
+  // Allow all origins for next/image
+  nextConfig.images.remotePatterns.push({
+    protocol: "https",
+    hostname: getHostname(process.env.WEBAPP_URL),
+  });
+} else {
+  // Allow all origins for next/image
+  nextConfig.images.remotePatterns.push({
+    protocol: "https",
+    hostname: "**",
+  });
 }
-
-// Allow all origins for next/image
-nextConfig.images.remotePatterns.push({
-  protocol: "https",
-  hostname: "**",
-});
 
 const sentryOptions = {
   // For all available options, see:
