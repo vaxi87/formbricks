@@ -7,6 +7,8 @@ export const POST = async () => {
   const headersList = headers();
   const apiKey = headersList.get("x-api-key");
 
+  console.log("running survey status cron job: checking for auth");
+
   if (!apiKey || apiKey !== CRON_SECRET) {
     return responses.notAuthenticatedResponse();
   }
@@ -24,6 +26,8 @@ export const POST = async () => {
     },
   });
 
+  console.log("surveys to close: ", JSON.stringify(surveysToClose, null, 2));
+
   if (surveysToClose.length) {
     await prisma.survey.updateMany({
       where: {
@@ -36,6 +40,8 @@ export const POST = async () => {
       },
     });
   }
+
+  console.log("DONE! surveys closed");
 
   // run surveys that are scheduled and have a runOnDate in the past
   const scheduledSurveys = await prisma.survey.findMany({
@@ -50,6 +56,8 @@ export const POST = async () => {
     },
   });
 
+  console.log("scheduled surveys: ", JSON.stringify(scheduledSurveys, null, 2));
+
   if (scheduledSurveys.length) {
     await prisma.survey.updateMany({
       where: {
@@ -62,6 +70,8 @@ export const POST = async () => {
       },
     });
   }
+
+  console.log("DONE! surveys scheduled");
 
   return responses.successResponse({
     message: `Updated ${surveysToClose.length} surveys to completed and ${scheduledSurveys.length} surveys to inProgress.`,
