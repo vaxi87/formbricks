@@ -1,9 +1,9 @@
 import { InsightCategory } from "@prisma/client";
 import { z } from "zod";
 import { ZId } from "../../types/common";
-import { _InsightModel } from "../zod/insight";
+import { InsightSchema } from "../zod/modelSchema/InsightSchema";
 
-export const ZInsight = _InsightModel.extend({
+export const ZInsight = InsightSchema.extend({
   _count: z.object({
     documentInsights: z.number(),
   }),

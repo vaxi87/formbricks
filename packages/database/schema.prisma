@@ -17,10 +17,19 @@ generator client {
 // }
 
 generator zod {
-  provider      = "zod-prisma"
-  output        = "./zod"
-  relationModel = "default"
-  imports       = "./zod-utils"
+  // provider      = "zod-prisma"
+  // output        = "./zod"
+  // relationModel = "default"
+  // imports       = "./zod-utils"
+
+  provider                  = "zod-prisma-types"
+  output                    = "./zod" // default is ./generated/zod
+  useMultipleFiles          = true // default is false
+  addIncludeType            = false // default is true
+  addSelectType             = false // default is true
+  validateWhereUniqueInput  = false // default is true
+  createRelationValuesTypes = true // default is false
+  createPartialTypes        = true // default is false
 }
 
 generator json {
@@ -117,20 +126,20 @@ model Response {
   contactId         String?
   endingId          String?
   notes             ResponseNote[]
-  /// @zod.custom(imports.ZResponseData)
+  /// @zod.import(["import { ZResponseData} from '../../zod-utils'"]).custom.use(ZResponseData)
   /// [ResponseData]
   data              Json              @default("{}")
-  /// @zod.custom(imports.ZResponseVariables)
+  /// @zod.import(["import { ZResponseVariables} from '../../zod-utils'"]).custom.use(ZResponseVariables)
   /// [ResponseVariables]
   variables         Json              @default("{}")
-  /// @zod.custom(imports.ZResponseTtc)
+  /// @zod.import(["import { ZResponseTtc} from '../../zod-utils'"]).custom.use(ZResponseTtc)
   /// [ResponseTtc]
   ttc               Json              @default("{}")
-  /// @zod.custom(imports.ZResponseMeta)
+  /// @zod.import(["import { ZResponseMeta} from '../../zod-utils'"]).custom.use(ZResponseMeta)
   /// [ResponseMeta]
   meta              Json              @default("{}")
   tags              TagsOnResponses[]
-  /// @zod.custom(imports.ZResponseContactAttributes)
+  /// @zod.import(["import { ZResponseContactAttributes} from '../../zod-utils'"]).custom.use(ZResponseContactAttributes)
   /// [ResponseContactAttributes]
   contactAttributes Json?
   // singleUseId, used to prevent multiple responses
@@ -273,20 +282,20 @@ model Survey {
   creator             User?                   @relation(fields: [createdBy], references: [id])
   createdBy           String?
   status              SurveyStatus            @default(draft)
-  /// @zod.custom(imports.ZSurveyWelcomeCard)
+  /// @zod.import(["import { ZSurveyWelcomeCard} from '../../zod-utils'"]).custom.use(ZSurveyWelcomeCard)
   /// [SurveyWelcomeCard]
   welcomeCard         Json                    @default("{\"enabled\": false}")
-  /// @zod.custom(imports.ZSurveyQuestions)
+  /// @zod.import(["import { ZSurveyQuestions} from '../../zod-utils'"]).custom.use(ZSurveyQuestions)
   /// [SurveyQuestions]
   questions           Json                    @default("[]")
-  /// @zod.custom(imports.ZSurveyEnding)
+  /// @zod.import(["import { ZSurveyEnding} from '../../zod-utils'"]).custom.use(ZSurveyEnding)
   /// [SurveyEnding]
   endings             Json[]                  @default([])
   thankYouCard        Json? //deprecated            
-  /// @zod.custom(imports.ZSurveyHiddenFields)
+  /// @zod.import(["import { ZSurveyHiddenFields} from '../../zod-utils'"]).custom.use(ZSurveyHiddenFields)
   /// [SurveyHiddenFields]
   hiddenFields        Json                    @default("{\"enabled\": false}")
-  /// @zod.custom(imports.ZSurveyVariables)
+  /// @zod.import(["import { ZSurveyVariables} from '../../zod-utils'"]).custom.use(ZSurveyVariables)
   /// [SurveyVariables]
   variables           Json                    @default("[]")
   responses           Response[]
@@ -294,7 +303,7 @@ model Survey {
   recontactDays       Int?
   displayLimit        Int?
   triggers            SurveyTrigger[]
-  /// @zod.custom(imports.ZSurveyInlineTriggers)
+  /// @zod.import(["import { ZSurveyInlineTriggers} from '../../zod-utils'"]).custom.use(ZSurveyInlineTriggers)
   /// [SurveyInlineTriggers]
   inlineTriggers      Json?
   attributeFilters    SurveyAttributeFilter[]
@@ -304,21 +313,21 @@ model Survey {
   delay               Int                     @default(0)
   runOnDate           DateTime?
   closeOnDate         DateTime?
-  /// @zod.custom(imports.ZSurveyClosedMessage)
+  /// @zod.import(["import { ZSurveyClosedMessage} from '../../zod-utils'"]).custom.use(ZSurveyClosedMessage)
   /// [SurveyClosedMessage]
   surveyClosedMessage Json?
   segmentId           String?
   segment             Segment?                @relation(fields: [segmentId], references: [id])
 
-  /// @zod.custom(imports.ZSurveyProjectOverwrites)
+  /// @zod.import(["import { ZSurveyProjectOverwrites} from '../../zod-utils'"]).custom.use(ZSurveyProjectOverwrites)
   /// [SurveyProjectOverwrites]
   projectOverwrites Json?
 
-  /// @zod.custom(imports.ZSurveyStyling)
+  /// @zod.import(["import { ZSurveyStyling} from '../../zod-utils'"]).custom.use(ZSurveyStyling)
   /// [SurveyStyling]
   styling Json?
 
-  /// @zod.custom(imports.ZSurveySingleUse)
+  /// @zod.import(["import { ZSurveySingleUse} from '../../zod-utils'"]).custom.use(ZSurveySingleUse)
   /// [SurveySingleUse]
   singleUse Json? @default("{\"enabled\": false, \"isEncrypted\": true}")
 
@@ -345,10 +354,10 @@ model SurveyFollowUp {
   surveyId  String
   name      String
   /// [SurveyFollowUpTrigger]
-  /// @zod.custom(imports.ZSurveyFollowUpTrigger)
+  /// @zod.import(["import { ZSurveyFollowUpTrigger} from '../../zod-utils'"]).custom.use(ZSurveyFollowUpTrigger)
   trigger   Json
   /// [SurveyFollowUpAction]
-  /// @zod.custom(imports.ZSurveyFollowUpAction)
+  /// @zod.import(["import { ZSurveyFollowUpAction} from '../../zod-utils'"]).custom.use(ZSurveyFollowUpAction)
   action    Json
 }
 
@@ -366,7 +375,7 @@ model ActionClass {
   description    String?
   type           ActionType
   key            String?
-  /// @zod.custom(imports.ZActionClassNoCodeConfig)
+  /// @zod.import(["import { ZActionClassNoCodeConfig} from '../../zod-utils'"]).custom.use(ZActionClassNoCodeConfig)
   /// [ActionClassNoCodeConfig]
   noCodeConfig   Json?
   environment    Environment     @relation(fields: [environmentId], references: [id], onDelete: Cascade)
@@ -394,7 +403,7 @@ model Integration {
   id            String          @id @default(cuid())
   type          IntegrationType
   environmentId String
-  /// @zod.custom(imports.ZIntegrationConfig)
+  /// @zod.import(["import { ZIntegrationConfig} from '../../zod-utils'"]).custom.use(ZIntegrationConfig)
   /// [IntegrationConfig]
   config        Json
   environment   Environment     @relation(fields: [environmentId], references: [id], onDelete: Cascade)
@@ -455,14 +464,14 @@ model Project {
   updatedAt            DateTime        @updatedAt @map(name: "updated_at")
   name                 String
   organization         Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  organizationId       String /// zod.custom(imports.ZId)
+  organizationId       String /// zod.custom.use(imports.ZId)
   environments         Environment[]
   brandColor           String? // deprecated; use styling.brandColor instead
   highlightBorderColor String? // deprecated
-  /// @zod.custom(imports.ZProjectStyling)
+  /// @zod.import(["import { ZProjectStyling} from '../../zod-utils'"]).custom.use(ZProjectStyling)
   /// [Styling]
   styling              Json            @default("{\"allowStyleOverwrite\":true}")
-  /// @zod.custom(imports.ZProjectConfig)
+  /// @zod.import(["import { ZProjectConfig} from '../../zod-utils'"]).custom.use(ZProjectConfig)
   /// [ProjectConfig]
   config               Json            @default("{}")
   recontactDays        Int             @default(7)
@@ -472,7 +481,7 @@ model Project {
   clickOutsideClose    Boolean         @default(true)
   darkOverlay          Boolean         @default(false)
   languages            Language[]
-  /// @zod.custom(imports.ZLogo)
+  /// @zod.import(["import { ZLogo} from '../../zod-utils'"]).custom.use(ZLogo)
   /// [Logo]
   logo                 Json?
   projectTeams         ProjectTeam[]
@@ -488,10 +497,10 @@ model Organization {
   name        String
   memberships Membership[]
   projects    Project[]
-  /// @zod.custom(imports.ZOrganizationBilling)
+  /// @zod.import(["import { ZOrganizationBilling} from '../../zod-utils'"]).custom.use(ZOrganizationBilling)
   /// [OrganizationBilling]
   billing     Json
-  /// @zod.custom(imports.ZOrganizationWhitelabel)
+  /// @zod.import(["import { ZOrganizationWhitelabel} from '../../zod-utils'"]).custom.use(ZOrganizationWhitelabel)
   /// [OrganizationWhitelabel]
   whitelabel  Json         @default("{}")
   invites     Invite[]
@@ -638,11 +647,10 @@ model User {
   invitesAccepted           Invite[]         @relation("inviteAcceptedBy")
   role                      Role?
   objective                 Objective?
-  /// @zod.custom(imports.ZUserNotificationSettings)
-  /// @zod.custom(imports.ZUserNotificationSettings)
+  /// @zod.import(["import { ZUserNotificationSettings} from '../../zod-utils'"]).custom.use(ZUserNotificationSettings)
   /// [UserNotificationSettings]
   notificationSettings      Json             @default("{}")
-  /// @zod.custom(imports.ZUserLocale)
+  /// @zod.import(["import { ZUserLocale} from '../../zod-utils'"]).custom.use(ZUserLocale)
   /// [Locale]
   locale                    String           @default("en-US")
   surveys                   Survey[]
@@ -665,7 +673,7 @@ model Segment {
   title         String
   description   String?
   isPrivate     Boolean     @default(true)
-  /// @zod.custom(imports.ZSegmentFilters)
+  /// @zod.import(["import { ZSegmentFilters} from '../../zod-utils'"]).custom.use(ZSegmentFilters)
   /// [SegmentFilter]
   filters       Json        @default("[]")
   environmentId String
