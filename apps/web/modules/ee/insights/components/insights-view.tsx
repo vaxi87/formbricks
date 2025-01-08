@@ -10,9 +10,10 @@ import { useCallback, useEffect, useState } from "react";
 import formbricks from "@formbricks/js";
 import { cn } from "@formbricks/lib/cn";
 import { TDocumentFilterCriteria } from "@formbricks/types/documents";
-import { TInsight, TInsightCategory } from "@formbricks/types/insights";
+import { InsightCategory } from "@prisma/client";
 import { TUserLocale } from "@formbricks/types/user";
 import CategoryBadge from "../experience/components/category-select";
+import { TInsight } from "@formbricks/database/types/insights";
 
 interface InsightViewProps {
   insights: TInsight[];
@@ -62,7 +63,7 @@ export const InsightView = ({
         setLocalInsights(insights);
       } else {
         setLocalInsights(
-          insights.filter((insight) => insight.category === (filterValue as TInsightCategory))
+          insights.filter((insight) => insight.category === (filterValue as InsightCategory))
         );
       }
     },
@@ -94,7 +95,7 @@ export const InsightView = ({
     );
   };
 
-  const onCategoryChange = async (insightId: string, newCategory: TInsight["category"]) => {
+  const onCategoryChange = async (insightId: string, newCategory: InsightCategory) => {
     updateLocalInsight(insightId, { category: newCategory });
   };
 

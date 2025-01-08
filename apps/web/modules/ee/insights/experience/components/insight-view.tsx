@@ -9,11 +9,12 @@ import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import formbricks from "@formbricks/js";
 import { TDocumentFilterCriteria } from "@formbricks/types/documents";
-import { TInsight, TInsightFilterCriteria } from "@formbricks/types/insights";
 import { TUserLocale } from "@formbricks/types/user";
 import { getEnvironmentInsightsAction } from "../actions";
 import CategoryBadge from "./category-select";
 import { InsightLoading } from "./insight-loading";
+import { TInsight, TInsightFilterCriteria } from "@formbricks/database/types/insights";
+import { InsightCategory } from "@prisma/client";
 
 interface InsightViewProps {
   statsFrom?: Date;
@@ -56,7 +57,7 @@ export const InsightView = ({
       documentCreatedAt: {
         min: statsFrom,
       },
-      category: activeTab === "all" ? undefined : (activeTab as TInsight["category"]),
+      category: activeTab === "all" ? undefined : (activeTab as InsightCategory),
     }),
     [statsFrom, activeTab]
   );

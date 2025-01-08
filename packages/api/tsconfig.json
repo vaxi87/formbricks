@@ -2,7 +2,8 @@
   "compilerOptions": {
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
-    "noEmit": true
+    "noEmit": true,
+    "noUnusedLocals": false
   },
   "exclude": ["dist", "build", "node_modules"],
   "extends": "@formbricks/config-typescript/js-library.json",

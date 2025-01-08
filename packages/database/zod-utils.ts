@@ -5,7 +5,7 @@ export const ZActionProperties = z.record(z.string());
 export { ZActionClassNoCodeConfig } from "../types/action-classes";
 export { ZIntegrationConfig } from "../types/integration";
 
-export { ZResponseData, ZResponseMeta, ZResponseTtc } from "../types/responses";
+export { ZResponseData, ZResponseMeta, ZResponseTtc, ZResponseVariables, ZResponseContactAttributes } from "../types/responses";
 
 export {
   ZSurveyWelcomeCard,
@@ -24,4 +24,6 @@ export { ZSurveyFollowUpAction, ZSurveyFollowUpTrigger } from "./types/survey-fo
 
 export { ZSegmentFilters } from "../types/segment";
 export { ZOrganizationBilling, ZOrganizationWhitelabel } from "../types/organizations";
-export { ZUserNotificationSettings } from "../types/user";
+export { ZUserNotificationSettings, ZUserLocale } from "../types/user";
+
+export { ZProjectStyling, ZProjectConfig, ZLogo } from "../types/project";

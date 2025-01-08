@@ -8,7 +8,7 @@ import { responseCache } from "@formbricks/lib/response/cache";
 import { validateInputs } from "@formbricks/lib/utils/validate";
 import { ZId, ZOptionalNumber } from "@formbricks/types/common";
 import { DatabaseError } from "@formbricks/types/errors";
-import { TInsight, TInsightFilterCriteria, ZInsightFilterCriteria } from "@formbricks/types/insights";
+import { TInsight, TInsightFilterCriteria, ZInsightFilterCriteria } from "@formbricks/database/types/insights";
 
 export const getInsights = reactCache(
   async (

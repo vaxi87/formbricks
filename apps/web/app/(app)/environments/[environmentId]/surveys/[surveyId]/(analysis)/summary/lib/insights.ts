@@ -7,8 +7,8 @@ import { INSIGHTS_PER_PAGE } from "@formbricks/lib/constants";
 import { validateInputs } from "@formbricks/lib/utils/validate";
 import { ZId } from "@formbricks/types/common";
 import { DatabaseError } from "@formbricks/types/errors";
-import { TInsight } from "@formbricks/types/insights";
 import { TSurveyQuestionId, ZSurveyQuestionId } from "@formbricks/types/surveys/types";
+import { TInsight } from "@formbricks/database/types/insights";
 
 export const getInsightsBySurveyIdQuestionId = reactCache(
   async (

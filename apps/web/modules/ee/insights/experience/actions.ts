@@ -11,9 +11,9 @@ import {
 import { checkAIPermission } from "@/modules/ee/insights/actions";
 import { z } from "zod";
 import { ZId } from "@formbricks/types/common";
-import { ZInsight, ZInsightFilterCriteria } from "@formbricks/types/insights";
 import { getInsights, updateInsight } from "./lib/insights";
 import { getStats } from "./lib/stats";
+import { ZInsight, ZInsightFilterCriteria } from "@formbricks/database/types/insights";
 
 const ZGetEnvironmentInsightsAction = z.object({
   environmentId: ZId,

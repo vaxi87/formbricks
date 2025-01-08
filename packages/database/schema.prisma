@@ -19,8 +19,8 @@ generator client {
 generator zod {
   provider      = "zod-prisma"
   output        = "./zod"
-  imports       = "./zod-utils"
   relationModel = "default"
+  imports       = "./zod-utils"
 }
 
 generator json {
@@ -322,8 +322,6 @@ model Survey {
   /// [SurveySingleUse]
   singleUse Json? @default("{\"enabled\": false, \"isEncrypted\": true}")
 
-  /// @zod.custom(imports.ZSurveyVerifyEmail)
-  /// [SurveyVerifyEmail]
   verifyEmail                     Json? // deprecated
   isVerifyEmailEnabled            Boolean          @default(false)
   isSingleResponsePerEmailEnabled Boolean          @default(false)
@@ -457,7 +455,7 @@ model Project {
   updatedAt            DateTime        @updatedAt @map(name: "updated_at")
   name                 String
   organization         Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  organizationId       String
+  organizationId       String /// zod.custom(imports.ZId)
   environments         Environment[]
   brandColor           String? // deprecated; use styling.brandColor instead
   highlightBorderColor String? // deprecated

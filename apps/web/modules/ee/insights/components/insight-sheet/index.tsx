@@ -16,12 +16,11 @@ import { useDeferredValue, useEffect, useState } from "react";
 import Markdown from "react-markdown";
 import { timeSince } from "@formbricks/lib/time";
 import { TDocument, TDocumentFilterCriteria } from "@formbricks/types/documents";
-import { TInsight } from "@formbricks/types/insights";
 import { TUserLocale } from "@formbricks/types/user";
 import CategoryBadge from "../../experience/components/category-select";
 import SentimentSelect from "../sentiment-select";
 import { getDocumentsByInsightIdAction, getDocumentsByInsightIdSurveyIdQuestionIdAction } from "./actions";
-
+import { TInsight } from "@formbricks/database/types/insights";
 interface InsightSheetProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;

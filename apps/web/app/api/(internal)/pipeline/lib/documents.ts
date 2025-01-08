@@ -13,7 +13,7 @@ import {
   ZDocumentSentiment,
 } from "@formbricks/types/documents";
 import { DatabaseError } from "@formbricks/types/errors";
-import { ZInsightCategory } from "@formbricks/types/insights";
+import { InsightCategory } from "@prisma/client";
 
 export const createDocumentAndAssignInsight = async (
   surveyName: string,
@@ -38,7 +38,7 @@ export const createDocumentAndAssignInsight = async (
           z.object({
             title: z.string().describe("insight title, very specific"),
             description: z.string().describe("very brief insight description"),
-            category: ZInsightCategory,
+            category: z.nativeEnum(InsightCategory),
           })
         ),
         isSpam: z.boolean(),
