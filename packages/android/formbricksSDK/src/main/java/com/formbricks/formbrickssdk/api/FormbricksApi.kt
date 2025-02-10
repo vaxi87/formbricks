@@ -12,11 +12,10 @@ object FormbricksApi {
     private val service = FormbricksApiService()
 
     fun initialize(cacheDir: File) {
-        val loggingEnabled = Formbricks.logLevel >= Log.VERBOSE
         service.initialize(
             appUrl = Formbricks.appUrl,
             cacheDir = cacheDir,
-            isLoggingEnabled = loggingEnabled
+            isLoggingEnabled = Formbricks.loggingEnabled
         )
     }
 

@@ -1,0 +1,48 @@
+package com.formbricks.formbrickssdk.helper
+
+import androidx.annotation.Keep
+
+@Keep
+class FormbricksConfig private constructor(
+    val appUrl: String,
+    val environmentId: String,
+    val userId: String?,
+    val attributes: Map<String,String>?,
+    val loggingEnabled: Boolean
+) {
+    class Builder(private val appUrl: String, private val environmentId: String) {
+        private var userId: String? = null
+        private var attributes: MutableMap<String,String> = mutableMapOf()
+        private var loggingEnabled = false
+
+        fun setUserId(userId: String): Builder {
+            this.userId = userId
+            return this
+        }
+
+        fun setAttributes(attributes: MutableMap<String,String>): Builder {
+            this.attributes = attributes
+            return this
+        }
+
+        fun addAttribute(attribute: String, key: String): Builder {
+            this.attributes[key] = attribute
+            return this
+        }
+
+        fun setLoggingEnabled(loggingEnabled: Boolean): Builder {
+            this.loggingEnabled = loggingEnabled
+            return this
+        }
+
+        fun build(): FormbricksConfig {
+            return FormbricksConfig(
+                appUrl = appUrl,
+                environmentId = environmentId,
+                userId = userId,
+                attributes = attributes,
+                loggingEnabled = loggingEnabled
+            )
+        }
+    }
+}
