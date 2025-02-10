@@ -2,19 +2,19 @@ import SwiftUI
 import FormbricksSDK
 
 struct ContentView: View {
-    @State var text = ""
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        HStack {
+            VStack {
+                Text("SAS")
+                Spacer()
+            }
+            .padding()
+            Spacer()
         }
-        .padding()
-        .onAppear {
-            
-        }
+        .background(Color.blue)
+    
     }
+    
 }
 
 #Preview {

@@ -2,7 +2,7 @@ import Foundation
 
 @objc(Formbricks) public class Formbricks: NSObject {
     
-    static internal var apiHost: String?
+    static internal var appUrl: String?
     static internal var environmentId: String?
     static internal var isInitialized: Bool = false
     
@@ -31,11 +31,11 @@ import Foundation
             return
         }
         
-        self.apiHost = config.appUrl
+        self.appUrl = config.appUrl
         self.environmentId = config.environmentId
         self.logger.logLevel = config.logLevel
         
-        EnvironmentManager.shared.refreshEnvironment()
+        SurveyManager.shared.refreshEnvironment()
         
         
         self.isInitialized = true

@@ -1,3 +1,3 @@
 struct ActionClassReference: Codable {
-    let name: String
+    let name: String?
 }

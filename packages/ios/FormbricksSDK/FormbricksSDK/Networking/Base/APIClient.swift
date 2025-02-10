@@ -20,7 +20,7 @@ class APIClient<Request: CodableRequest>: Operation, @unchecked Sendable {
         baseUrlComponents.queryItems = request.queryParams?.map { URLQueryItem(name: $0.key, value: $0.value) }
         
         guard var finalURL = baseUrlComponents.url else {
-            completion?(.failure(FormbricksSDKError(type: .invalidApiHost)))
+            completion?(.failure(FormbricksSDKError(type: .invalidAppUrl)))
             return
         }
         
@@ -69,8 +69,16 @@ class APIClient<Request: CodableRequest>: Operation, @unchecked Sendable {
                             Formbricks.logger.info(responseLogMessage)
                             self.completion?(.success(VoidResponse() as! Request.Response))
                         } else {
-                            let body = try self.request.decoder.decode(Request.Response.self, from: data)
+                            var body = try self.request.decoder.decode(Request.Response.self, from: data)
                             Formbricks.logger.info(responseLogMessage)
+                            
+                            // We want to save the entire response dictionary for the environment response
+                            if var environmentResponse = body as? EnvironmentResponse {
+                                let dict = try JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
+                                environmentResponse.responseDictionary = dict
+                                body = environmentResponse as! Request.Response
+                            }
+                            
                             self.completion?(.success(body))
                         }
                     }
@@ -135,7 +143,7 @@ private extension APIClient {
             urlRequest.addValue($0.value, forHTTPHeaderField: $0.key)
         }
         
-        urlRequest.cachePolicy = .useProtocolCachePolicy
+        urlRequest.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
         urlRequest.httpMethod = request.requestType.rawValue
         
         if let body = request.requestBody {

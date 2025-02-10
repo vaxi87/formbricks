@@ -1,3 +1,3 @@
 struct BrandColor: Codable {
-    let light: String
+    let light: String?
 }

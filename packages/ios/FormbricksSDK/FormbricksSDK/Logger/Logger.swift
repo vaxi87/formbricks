@@ -11,7 +11,6 @@ import Foundation
 
 @objc(FormbricksLogger) public final class Logger: NSObject {
     public var logLevel: LogLevel = .none
-    var errorCount = 0
     let name: String
     let emoji: String = "📝"
     

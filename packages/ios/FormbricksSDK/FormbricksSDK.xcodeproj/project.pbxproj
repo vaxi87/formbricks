@@ -43,23 +43,18 @@
 				Model/Environment/Common/LocalizedText.swift,
 				Model/Environment/EnvironmentData.swift,
 				Model/Environment/EnvironmentResponse.swift,
+				Model/Environment/EnvironmentResponseData.swift,
 				Model/Environment/Project/BrandColor.swift,
 				Model/Environment/Project/Project.swift,
 				Model/Environment/Project/Styling.swift,
 				Model/Environment/Survey.swift,
 				Model/Environment/Surveys/ActionClassReference.swift,
-				Model/Environment/Surveys/CharLimit.swift,
-				Model/Environment/Surveys/Ending.swift,
-				Model/Environment/Surveys/HiddenFields.swift,
-				Model/Environment/Surveys/Question.swift,
 				Model/Environment/Surveys/Segment.swift,
 				Model/Environment/Surveys/Trigger.swift,
-				Model/Environment/Surveys/WelcomeCard.swift,
 				Model/User/Display.swift,
 				Model/User/State.swift,
 				Model/User/StateData.swift,
 				Model/User/StateDetails.swift,
-				SasView.swift,
 			);
 			target = 4DDAED672D50D49B00A19B1F /* FormbricksSDKTests */;
 		};
@@ -275,6 +270,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -309,6 +305,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

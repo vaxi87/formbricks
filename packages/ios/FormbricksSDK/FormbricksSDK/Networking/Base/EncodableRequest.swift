@@ -58,7 +58,7 @@ public extension CodableRequest {
     typealias ErrorType = RuntimeError
     
     var baseURL: String? {
-        return Formbricks.apiHost
+        return Formbricks.appUrl
     }
   
     var decoder: JSONDecoder {
