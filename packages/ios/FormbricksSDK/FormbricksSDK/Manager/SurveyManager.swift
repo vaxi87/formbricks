@@ -37,7 +37,7 @@ final class SurveyManager {
             case .success(let response):
                 self?.environmentResponse = response
                 self?.handleEnvironmentChage()
-                self?.startRefreshTimer(environment: response.data.data, expiresAt: response.data.expiresAt)
+                self?.startRefreshTimer(expiresAt: response.data.expiresAt)
             case .failure:
                 Formbricks.logger.error(FormbricksSDKError(type: .unableToRefreshEnvironment).message)
                 self?.startErrorTimer()
@@ -84,7 +84,7 @@ private extension SurveyManager {
                     
     }
     
-    func startRefreshTimer(environment: EnvironmentData, expiresAt: Date) {
+    func startRefreshTimer(expiresAt: Date) {
         let timeout = expiresAt.timeIntervalSinceNow
         refreshEnvironmentAfter(timeout: timeout)
     }

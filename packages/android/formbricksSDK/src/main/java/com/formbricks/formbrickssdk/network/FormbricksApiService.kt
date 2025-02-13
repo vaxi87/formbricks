@@ -3,10 +3,8 @@ package com.formbricks.formbrickssdk.network
 import com.formbricks.formbrickssdk.api.error.FormbricksAPIError
 import com.formbricks.formbrickssdk.api.FormbricksRetrofitBuilder
 import com.formbricks.formbrickssdk.helper.mapToJsonElement
-import com.formbricks.formbrickssdk.model.EnvironmentResponse
+import com.formbricks.formbrickssdk.model.environment.EnvironmentResponse
 import com.formbricks.formbrickssdk.model.environment.EnvironmentDataHolder
-import com.formbricks.formbrickssdk.model.environment.getFirstSurveyJson
-import com.formbricks.formbrickssdk.model.environment.getStylingJson
 import com.google.gson.Gson
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
@@ -19,8 +17,8 @@ class FormbricksApiService {
 
     private lateinit var retrofit: Retrofit
 
-    fun initialize(appUrl: String, cacheDir: File, isLoggingEnabled: Boolean) {
-        retrofit = FormbricksRetrofitBuilder(appUrl, isLoggingEnabled, cacheDir)
+    fun initialize(appUrl: String, isLoggingEnabled: Boolean) {
+        retrofit = FormbricksRetrofitBuilder(appUrl, isLoggingEnabled)
             .getBuilder()
             .build()
     }
@@ -43,6 +41,7 @@ class FormbricksApiService {
         return if (call.isSuccessful) {
             val body = call.body()
             if (body == null) {
+                // TODO: handle error
                 Result.failure(RuntimeException(""))
             } else {
                 Result.success(body)

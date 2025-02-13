@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.formbricks.formbrickssdk.Formbricks
 import com.formbricks.formbrickssdk.api.FormbricksApi
+import com.formbricks.formbrickssdk.extensions.guard
+import com.formbricks.formbrickssdk.manager.SurveyManager
 import com.formbricks.formbrickssdk.model.environment.EnvironmentDataHolder
 import com.formbricks.formbrickssdk.model.environment.getFirstSurveyJson
 import com.formbricks.formbrickssdk.model.environment.getStylingJson
@@ -35,27 +37,23 @@ class FormbricksViewModel : ViewModel() {
 
                 function onClose() {
                     console.log("onClose")
-                    // window.webkit.messageHandlers.jsMessage.postMessage(JSON.stringify({ event: "onClose" }));
+                    FormbricksJavascript.message(JSON.stringify({ event: "onClose" }));
                 };
 
                 function onFinished() {
-                    console.log("onFinished")
-                    // window.webkit.messageHandlers.jsMessage.postMessage(JSON.stringify({ event: "onFinished" }));
+                    FormbricksJavascript.message(JSON.stringify({ event: "onFinished" }));
                 };
 
                 function onDisplay() {
-                    console.log("onFinished")
-                    // window.webkit.messageHandlers.jsMessage.postMessage(JSON.stringify({ event: "onDisplay" }));
+                    FormbricksJavascript.message(JSON.stringify({ event: "onDisplay" }));
                 };
 
                 function onResponse(responseUpdate) {
-                    console.log("onFinished")
-                    // window.webkit.messageHandlers.jsMessage.postMessage(JSON.stringify({ event: "onResponse", responseUpdate }));
+                    FormbricksJavascript.message(JSON.stringify({ event: "onResponse", responseUpdate }));
                 };
 
                 function onRetry(responseUpdate) {
-                    console.log("onFinished")
-                    // window.webkit.messageHandlers.jsMessage.postMessage(JSON.stringify({ event: "onRetry" }));
+                    FormbricksJavascript.message(JSON.stringify({ event: "onRetry" }));
                 };
 
                 window.fileUploadPromiseCallbacks = new Map();
@@ -64,7 +62,7 @@ class FormbricksViewModel : ViewModel() {
                     return new Promise((resolve, reject) => {
                         const uploadId = Date.now() + '-' + Math.random(); // Generate a unique ID for this upload
 
-                        window.webkit.messageHandlers.jsMessage.postMessage(JSON.stringify({ event: "onFileUpload", uploadId, fileUploadParams: { file, params } }));
+                        FormbricksJavascript.message(JSON.stringify({ event: "onFileUpload", uploadId, fileUploadParams: { file, params } }));
 
                         const promiseResolve = (url) => {
                             resolve(url);
@@ -123,12 +121,10 @@ class FormbricksViewModel : ViewModel() {
 """
 
     fun loadHtml() {
-        viewModelScope.launch {
-            val environment = FormbricksApi.getEnvironmentState().getOrThrow()
-            val json = getJson(environment)
-            val htmlString = htmlTemplate.replace("{{WEBVIEW_DATA}}", json)
-            html.postValue(htmlString)
-        }
+        val environment = SurveyManager.environmentDataHolder.guard { return }
+        val json = getJson(environment)
+        val htmlString = htmlTemplate.replace("{{WEBVIEW_DATA}}", json)
+        html.postValue(htmlString)
     }
 
     private fun getJson(environmentDataHolder: EnvironmentDataHolder): String {

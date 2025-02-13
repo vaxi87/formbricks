@@ -1,16 +1,18 @@
 package com.formbricks.formbrickssdk.webview
 
-import android.R
 import android.annotation.SuppressLint
-import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.ConsoleMessage
+import android.webkit.WebChromeClient
+import android.webkit.WebView
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
+import com.formbricks.formbrickssdk.Formbricks
 import com.formbricks.formbrickssdk.databinding.FragmentFormbricksBinding
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 
@@ -29,10 +31,6 @@ class FormbricksFragment : BottomSheetDialogFragment() {
 
     private val viewModel: FormbricksViewModel by viewModels()
 
-//    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-//        return BottomSheetDialog(requireContext(), com.formbricks.formbrickssdk.R.style.MyTransparentBottomSheetDialogTheme)
-//    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentFormbricksBinding.inflate(inflater).apply {
             lifecycleOwner = viewLifecycleOwner
@@ -44,7 +42,26 @@ class FormbricksFragment : BottomSheetDialogFragment() {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.formbricksWebview.settings.javaScriptEnabled = true
+        binding.formbricksWebview.let {
+            if (Formbricks.loggingEnabled) {
+                WebView.setWebContentsDebuggingEnabled(true)
+            }
+            it.webChromeClient = object : WebChromeClient() {
+                override fun onConsoleMessage(consoleMessage: ConsoleMessage?): Boolean {
+                    consoleMessage?.let { cm ->
+                        val log = "[CONSOLE:${cm.messageLevel()}] \"${cm.message()}\", source: ${cm.sourceId()} (${cm.lineNumber()})"
+                        Log.d("Javascript message", log)
+                    }
+                    return super.onConsoleMessage(consoleMessage)
+                }
+            }
+            it.settings.javaScriptEnabled = true
+            it.settings.domStorageEnabled = true
+            it.settings.loadWithOverviewMode = true
+            it.settings.useWideViewPort = true
+            it.addJavascriptInterface(WebAppInterface(), WebAppInterface.INTERFACE_NAME)
+        }
         viewModel.loadHtml()
     }
 }
+

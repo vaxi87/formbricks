@@ -1,16 +1,26 @@
 package com.formbricks.formbrickssdk.model.environment
 
-import com.formbricks.formbrickssdk.helper.mapToJsonElement
-import com.formbricks.formbrickssdk.model.EnvironmentResponseData
 import com.google.gson.Gson
 import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import kotlinx.serialization.json.jsonObject
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Date
 
 data class EnvironmentDataHolder(
     val data: EnvironmentResponseData?,
     val originalResponseMap: Map<String, Any>
 )
+
+fun EnvironmentDataHolder.expiresAt(): Date? {
+    data?.expiresAt?.let {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        val dateTime = LocalDateTime.parse(it, formatter)
+        return Date.from(dateTime.atZone(ZoneId.of("GMT")).toInstant())
+    }
+
+    return null
+}
 
 @Suppress("UNCHECKED_CAST")
 fun EnvironmentDataHolder.getFirstSurveyJson(): JsonElement? {
@@ -20,10 +30,6 @@ fun EnvironmentDataHolder.getFirstSurveyJson(): JsonElement? {
     val firstSurvey = surveyArray?.firstOrNull() as? Map<String, Any?>
     firstSurvey?.let {
         return Gson().toJsonTree(it)
-//        val firstSurveyJson = mapToJsonElement(it).jsonObject
-//        val str = firstSurveyJson.toString()
-//        return str.replace("\\\"","'")
-//        return Gson().toJson(it).toString()
     }
 
     return null
@@ -37,10 +43,6 @@ fun EnvironmentDataHolder.getStylingJson(): JsonElement? {
     val stylingMap = projectMap?.get("styling") as? Map<String, Any?>
     stylingMap?.let {
         return Gson().toJsonTree(it)
-//        val stylingJson = mapToJsonElement(it).jsonObject
-//        val str = stylingJson.toString()
-//        return str.replace("#", "%23")
-////        return Gson().toJson(it).toString()
     }
 
     return null

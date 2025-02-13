@@ -1,6 +1,5 @@
 package com.formbricks.formbrickssdk.network
 
-import com.formbricks.formbrickssdk.model.EnvironmentResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path

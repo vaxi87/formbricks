@@ -5,15 +5,13 @@ import com.formbricks.formbrickssdk.model.environment.EnvironmentDataHolder
 import com.formbricks.formbrickssdk.network.FormbricksApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.File
 
 object FormbricksApi {
     private val service = FormbricksApiService()
 
-    fun initialize(cacheDir: File) {
+    fun initialize() {
         service.initialize(
             appUrl = Formbricks.appUrl,
-            cacheDir = cacheDir,
             isLoggingEnabled = Formbricks.loggingEnabled
         )
     }
