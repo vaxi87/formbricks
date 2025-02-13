@@ -1,8 +1,7 @@
 package com.formbricks.formbrickssdk.api
 
-import android.util.Log
 import com.formbricks.formbrickssdk.Formbricks
-import com.formbricks.formbrickssdk.model.EnvironmentResponse
+import com.formbricks.formbrickssdk.model.environment.EnvironmentDataHolder
 import com.formbricks.formbrickssdk.network.FormbricksApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -19,14 +18,16 @@ object FormbricksApi {
         )
     }
 
-    suspend fun getEnvironmentState(): Result<EnvironmentResponse> = withContext(Dispatchers.IO) {
+    suspend fun getEnvironmentState(): Result<EnvironmentDataHolder> = withContext(Dispatchers.IO) {
         try {
-            val response = service.getEnvironmentState(Formbricks.environmentId)
+            val response = service.getEnvironmentStateObject(Formbricks.environmentId)
             val result = response.getOrThrow()
             Result.success(result)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
+
+    // TODO: post response
 
 }

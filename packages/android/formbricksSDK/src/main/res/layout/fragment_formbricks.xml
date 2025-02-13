@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.formbricks.formbrickssdk.webview.FormbricksViewModel" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".webview.FormbricksFragment">
+
+        <WebView
+            android:id="@+id/formbricks_webview"
+            android:layout_width="match_parent"
+            android:layout_height="600dp"
+            bind:htmlText="@{viewModel.html}"/>
+
+    </FrameLayout>
+</layout>

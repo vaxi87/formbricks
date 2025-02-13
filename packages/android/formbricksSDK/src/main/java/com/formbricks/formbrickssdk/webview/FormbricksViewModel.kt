@@ -1,21 +1,23 @@
-import SwiftUI
+package com.formbricks.formbrickssdk.webview
 
-class FormbricksViewModel: ObservableObject {
-    @Published var htmlString: String?
-    @Published var surveyId: String?
-    
-    init(environmentResponse: EnvironmentResponse?) {
-        if let environmentResponse = environmentResponse, let webviewDataJson = WebViewData(environmentResponse: environmentResponse).getJsonString() {
-            htmlString = htmlTemplate.replacingOccurrences(of: "{{WEBVIEW_DATA}}", with: webviewDataJson)
-            surveyId = environmentResponse.data.data.surveys?.first?.id
-        }
-    }
-}
+import android.webkit.WebView
+import androidx.databinding.BindingAdapter
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.formbricks.formbrickssdk.Formbricks
+import com.formbricks.formbrickssdk.api.FormbricksApi
+import com.formbricks.formbrickssdk.model.environment.EnvironmentDataHolder
+import com.formbricks.formbrickssdk.model.environment.getFirstSurveyJson
+import com.formbricks.formbrickssdk.model.environment.getStylingJson
+import com.google.gson.JsonObject
+import kotlinx.coroutines.launch
 
-private extension FormbricksViewModel {
-    var htmlTemplate: String {
-        return """
-        <!doctype html>
+class FormbricksViewModel : ViewModel() {
+    var html = MutableLiveData<String>()
+
+    private val htmlTemplate = """
+ <!doctype html>
         <html>
             <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0">
             
@@ -29,26 +31,31 @@ private extension FormbricksViewModel {
             </body>
 
             <script type="text/javascript">
-                const json = `{{WEBVIEW_DATA}}`
+                var json = `{{WEBVIEW_DATA}}`
 
                 function onClose() {
-                    window.webkit.messageHandlers.jsMessage.postMessage(JSON.stringify({ event: "onClose" }));
+                    console.log("onClose")
+                    // window.webkit.messageHandlers.jsMessage.postMessage(JSON.stringify({ event: "onClose" }));
                 };
 
                 function onFinished() {
-                    window.webkit.messageHandlers.jsMessage.postMessage(JSON.stringify({ event: "onFinished" }));
+                    console.log("onFinished")
+                    // window.webkit.messageHandlers.jsMessage.postMessage(JSON.stringify({ event: "onFinished" }));
                 };
 
                 function onDisplay() {
-                    window.webkit.messageHandlers.jsMessage.postMessage(JSON.stringify({ event: "onDisplay" }));
+                    console.log("onFinished")
+                    // window.webkit.messageHandlers.jsMessage.postMessage(JSON.stringify({ event: "onDisplay" }));
                 };
 
                 function onResponse(responseUpdate) {
-                    window.webkit.messageHandlers.jsMessage.postMessage(JSON.stringify({ event: "onResponse", responseUpdate }));
+                    console.log("onFinished")
+                    // window.webkit.messageHandlers.jsMessage.postMessage(JSON.stringify({ event: "onResponse", responseUpdate }));
                 };
 
                 function onRetry(responseUpdate) {
-                    window.webkit.messageHandlers.jsMessage.postMessage(JSON.stringify({ event: "onRetry" }));
+                    console.log("onFinished")
+                    // window.webkit.messageHandlers.jsMessage.postMessage(JSON.stringify({ event: "onRetry" }));
                 };
 
                 window.fileUploadPromiseCallbacks = new Map();
@@ -104,7 +111,7 @@ private extension FormbricksViewModel {
                 }
 
                 const script = document.createElement("script");
-                script.src = "\(Formbricks.appUrl ?? "http://localhost:3000")/js/surveys.umd.cjs";
+                script.src = "${Formbricks.appUrl}/js/surveys.umd.cjs";
                 script.async = true;
                 script.onload = () => loadSurvey();
                 script.onerror = (error) => {
@@ -113,32 +120,34 @@ private extension FormbricksViewModel {
                 document.head.appendChild(script);
             </script>
         </html>
-        """
-    }
-    
-}
+"""
 
-// MARK: - Helper class -
-private class WebViewData {
-    var data: [String: Any] = [:]
-    
-    init(environmentResponse: EnvironmentResponse) {
-        data["survey"] = environmentResponse.getFirstSurveyJson()
-        data["isBrandingEnabled"] = true
-        data["styling"] = environmentResponse.getStylingJson()
-        data["languageCode"] = "default"
-        data["appUrl"] = Formbricks.appUrl
-//        data["fullSizeCards"] = true
-    }
-    
-    func getJsonString() -> String? {
-        do {
-            let jsonData = try JSONSerialization.data(withJSONObject: data, options: [])
-            return String(data: jsonData, encoding: .utf8)?.replacingOccurrences(of: "\\\"", with: "'")
-        } catch {
-            Formbricks.logger.error(error.message)
-            return nil
+    fun loadHtml() {
+        viewModelScope.launch {
+            val environment = FormbricksApi.getEnvironmentState().getOrThrow()
+            val json = getJson(environment)
+            val htmlString = htmlTemplate.replace("{{WEBVIEW_DATA}}", json)
+            html.postValue(htmlString)
         }
     }
-    
+
+    private fun getJson(environmentDataHolder: EnvironmentDataHolder): String {
+        val jsonObject = JsonObject()
+        environmentDataHolder.getFirstSurveyJson()?.let { jsonObject.add("survey", it) }
+        environmentDataHolder.getStylingJson()?.let { jsonObject.add("styling", it) }
+        jsonObject.addProperty("isBrandingEnabled", true)
+        jsonObject.addProperty("appUrl", Formbricks.appUrl)
+        jsonObject.addProperty("languageCode", "default")
+
+        return jsonObject.toString()
+            .replace("#", "%23") // Hex color code's # breaks the JSON
+            .replace("\\\"","'") // " is replaced to ' in the html codes in the JSON
+    }
+
+
+}
+
+@BindingAdapter("htmlText")
+fun WebView.setHtmlText(htmlString: String?) {
+    loadData(htmlString ?: "", "text/html", "UTF-8")
 }

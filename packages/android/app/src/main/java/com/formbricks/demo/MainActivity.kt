@@ -11,14 +11,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.fragment.app.FragmentActivity
 import com.formbricks.demo.ui.theme.DemoTheme
 import com.formbricks.formbrickssdk.Formbricks
+import com.formbricks.formbrickssdk.helper.FormbricksConfig
 
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Formbricks.setup(this)
+        val config = FormbricksConfig.Builder("http://192.168.0.20:3000","cm6ovvfoc000asf0k39wbzc8s")
+            .setLoggingEnabled(true)
+            .setFragmentManager(supportFragmentManager)
+        Formbricks.setup(this, config.build())
+        Formbricks.show()
+
 
         enableEdgeToEdge()
         setContent {

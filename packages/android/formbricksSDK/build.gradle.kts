@@ -1,6 +1,8 @@
 plugins {
     id("com.android.library")
     kotlin("android")
+    kotlin("kapt")
+    kotlin("plugin.serialization") version "2.1.0"
 }
 
 android {
@@ -23,6 +25,10 @@ android {
             )
         }
     }
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -42,6 +48,15 @@ dependencies {
     implementation(libs.retrofit.converter.gson)
     implementation(libs.retrofit.converter.scalars)
     implementation(libs.okhttp3.logging.interceptor)
+
+    implementation(libs.material)
+
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.legacy.support.v4)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.databinding.common)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

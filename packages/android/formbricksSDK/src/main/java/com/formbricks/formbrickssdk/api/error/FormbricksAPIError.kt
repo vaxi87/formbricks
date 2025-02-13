@@ -1,4 +1,4 @@
-package com.formbricks.formbrickssdk.api
+package com.formbricks.formbrickssdk.api.error
 
 import com.google.gson.annotations.SerializedName
 
