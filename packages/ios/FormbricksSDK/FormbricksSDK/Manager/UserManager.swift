@@ -41,9 +41,13 @@ final class UserManager {
         UpdateQueue.current.set(language: language)
     }
     
-    /// Saves the current date to the `lastDisplayedAt` property. Called when a survey is displayed and the user is anonymous.
-    func anonymousOnDisplay() {
-        lastDisplayedAt = Date()
+    /// Saves `surveyId` to the `displays` property and the current date to the `lastDisplayedAt` property. Called when a survey is displayed and the user is anonymous.
+    func anonymousOnDisplay(surveyId: String) {
+        let lastDisplayedAt = Date()
+        var newDisplays = displays ?? []
+        newDisplays.append(Display(surveyId: surveyId, createdAt: DateFormatter.isoFormatter.string(from: lastDisplayedAt)))
+        displays = newDisplays
+        self.lastDisplayedAt = lastDisplayedAt
     }
     
     /// Saves `surveyId` to the `responses` property. Called when a survey is responded to and the user is anonymous.

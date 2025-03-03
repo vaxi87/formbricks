@@ -160,6 +160,18 @@ object SurveyManager {
     /**
      * Posts a survey response to the Formbricks API.
      */
+    fun postResponse(surveyId: String?) {
+        val id = surveyId.guard {
+            Timber.tag("SurveyManager").e("Survey id is mandatory to set.")
+            return
+        }
+
+        UserManager.anonymousOnResponse(id)
+    }
+
+    /**
+     * Posts a survey response to the Formbricks API.
+     */
     fun postResponse(response: SurveyResponse?, surveyId: String?) {
         val resp = response.guard {
             Timber.tag("SurveyManager").e("Survey response is mandatory to set.")
@@ -189,6 +201,18 @@ object SurveyManager {
     /**
      * Creates a new display for the survey. It is called when the survey is displayed to the user.
      */
+    fun onNewDisplay(surveyId: String?) {
+        val id = surveyId.guard {
+            Timber.tag("SurveyManager").e("Survey id is mandatory to set.")
+            return
+        }
+
+        UserManager.anonymousOnResponse(id)
+    }
+
+    /**
+     * Creates a new display for the survey. It is called when the survey is displayed to the user.
+     */
     fun createNewDisplay(surveyId: String?) {
         val id = surveyId.guard {
             Timber.tag("SurveyManager").e("Survey id is mandatory to set.")
@@ -196,7 +220,7 @@ object SurveyManager {
         }
 
         if (UserManager.userId == null) {
-            UserManager.anonymousOnDisplay()
+            UserManager.anonymousOnDisplay(id)
             return
         }
 

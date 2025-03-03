@@ -31,7 +31,6 @@ class MainActivity : FragmentActivity() {
         Formbricks.setUserId("AndroidUser")
         Formbricks.setAttributes(mapOf(Pair("key", "my_attribute")))
 
-
         enableEdgeToEdge()
         setContent {
             Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->

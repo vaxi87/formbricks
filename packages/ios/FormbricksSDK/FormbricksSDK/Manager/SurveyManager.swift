@@ -88,6 +88,11 @@ extension SurveyManager {
     }
     
     /// Posts a survey response to the Formbricks API.
+    func postResponse(surveyId: String) {
+        UserManager.shared.anonymousOnResponse(surveyId: surveyId)
+    }
+    
+    /// Posts a survey response to the Formbricks API.
     func postResponse(_ responseUpdate: ResponseUpdate?, forSurveyId id: String) {
         guard let responseUpdate = responseUpdate else {
             Formbricks.logger.error(FormbricksSDKError(type: .invalidJavascriptMessage).message)
@@ -120,10 +125,15 @@ extension SurveyManager {
     }
     
     /// Creates a new display for the survey. It is called when the survey is displayed to the user.
+    func onNewDisplay(surveyId: String) {
+        UserManager.shared.anonymousOnDisplay(surveyId: surveyId)
+    }
+    
+    /// Creates a new display for the survey. It is called when the survey is displayed to the user.
     func createNewDisplay(surveyId: String) {
         guard let userId = UserManager.shared.userId else {
             /// If we don't have a user, we only save the last displayed date in the `UserManager`
-            UserManager.shared.anonymousOnDisplay()
+            UserManager.shared.anonymousOnDisplay(surveyId: surveyId)
             return
         }
         

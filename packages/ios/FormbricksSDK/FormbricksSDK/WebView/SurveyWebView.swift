@@ -65,15 +65,13 @@ final class JsMessageHandler: NSObject, WKScriptMessageHandler {
                 if let response = try? JSONDecoder().decode(JsResponseMessage.self, from: data) {
                     SurveyManager.shared.postResponse(response.responseUpdate, forSurveyId: surveyId)
                 }
-            
+            case .onResponseCreated:
+                SurveyManager.shared.postResponse(surveyId: surveyId)
             /// Happens when a survey view appears..
             case .onDisplay:
                 SurveyManager.shared.createNewDisplay(surveyId: surveyId)
-                
-                DispatchQueue.main.async {
-                    message.webView?.evaluateJavaScript("console.log('{\"uploadId\":\"1740480613230-0.9406125729034464\",\"success\":true,\"url\":\"http://localhost:3000/storage/cm6ovvfoc000asf0k39wbzc8s/private/IMG_0004--fid--8f1e3b80-73d3-418a-893e-dd66a07dd6c2.jpeg\"}')")
-                }
-                
+            case .onDisplayCreated:
+                SurveyManager.shared.onNewDisplay(surveyId: surveyId)
             /// Happens when a file is selected to be uploaded from a file picker.
             case .onFileUpload:
                 if let fileMessage = try? JSONDecoder().decode(JsFileUploadMessage.self, from: data) {

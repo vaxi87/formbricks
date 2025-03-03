@@ -1,7 +1,6 @@
 package com.formbricks.formbrickssdk.webview
 
 import android.webkit.JavascriptInterface
-import com.formbricks.formbrickssdk.Formbricks
 import com.formbricks.formbrickssdk.model.javascript.FileData
 import com.formbricks.formbrickssdk.model.javascript.JsFileUploadMessage
 import com.formbricks.formbrickssdk.model.javascript.JsMessageData
@@ -16,7 +15,9 @@ class WebAppInterface(private val callback: WebAppCallback?) {
         fun onClose()
         fun onFinished()
         fun onDisplay()
+        fun onDisplayCreated()
         fun onResponse(response: SurveyResponse?)
+        fun onResponseCreated()
         fun onRetry()
         fun onFileUpload(file: FileData, uploadId: String)
     }
@@ -34,7 +35,9 @@ class WebAppInterface(private val callback: WebAppCallback?) {
                 EventType.ON_CLOSE -> callback?.onClose()
                 EventType.ON_FINISHED -> callback?.onFinished()
                 EventType.ON_DISPLAY -> callback?.onDisplay()
+                EventType.ON_DISPLAY_CREATED -> callback?.onDisplayCreated()
                 EventType.ON_RESPONSE -> callback?.onResponse(JsResponseMessage.from(data).surveyResponse)
+                EventType.ON_RESPONSE_CREATED -> callback?.onResponseCreated()
                 EventType.ON_RETRY -> callback?.onRetry()
                 EventType.ON_FILE_UPLOAD -> {
                     val message = JsFileUploadMessage.from(data)

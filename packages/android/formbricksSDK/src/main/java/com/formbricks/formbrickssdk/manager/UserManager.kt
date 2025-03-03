@@ -3,6 +3,7 @@ package com.formbricks.formbrickssdk.manager
 import android.content.Context
 import com.formbricks.formbrickssdk.Formbricks
 import com.formbricks.formbrickssdk.api.FormbricksApi
+import com.formbricks.formbrickssdk.extensions.dateString
 import com.formbricks.formbrickssdk.extensions.expiresAt
 import com.formbricks.formbrickssdk.extensions.guard
 import com.formbricks.formbrickssdk.extensions.lastDisplayAt
@@ -76,10 +77,14 @@ object UserManager {
     }
 
     /**
-     * Saves the current date to the [lastDisplayedAt] property. Called when a survey is displayed and the user is anonymous.
+     * Saves [surveyId] to the [displays] property and the the current date to the [lastDisplayedAt] property. Called when a survey is displayed and the user is anonymous.
      */
-    fun anonymousOnDisplay() {
-        lastDisplayedAt = Date()
+    fun anonymousOnDisplay(surveyId: String) {
+        val lastDisplayedAt = Date()
+        val newDisplays = displays?.toMutableList() ?: mutableListOf()
+        newDisplays.add(Display(surveyId, lastDisplayedAt.dateString()))
+        displays = newDisplays
+        this.lastDisplayedAt = lastDisplayedAt
     }
 
     /**

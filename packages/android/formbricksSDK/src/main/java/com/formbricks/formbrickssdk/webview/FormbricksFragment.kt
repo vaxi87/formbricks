@@ -57,8 +57,16 @@ class FormbricksFragment : BottomSheetDialogFragment() {
             SurveyManager.createNewDisplay(surveyId)
         }
 
+        override fun onDisplayCreated() {
+            SurveyManager.onNewDisplay(surveyId)
+        }
+
         override fun onResponse(response: SurveyResponse?) {
             SurveyManager.postResponse(response, surveyId)
+        }
+
+        override fun onResponseCreated() {
+            SurveyManager.postResponse(surveyId)
         }
 
         override fun onRetry() {
