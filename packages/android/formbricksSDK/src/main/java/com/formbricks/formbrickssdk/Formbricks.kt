@@ -11,6 +11,7 @@ import com.formbricks.formbrickssdk.logger.Logger
 import com.formbricks.formbrickssdk.manager.SurveyManager
 import com.formbricks.formbrickssdk.manager.UserManager
 import com.formbricks.formbrickssdk.model.error.SDKError
+import com.formbricks.formbrickssdk.model.enums.SuccessType
 import com.formbricks.formbrickssdk.webview.FormbricksFragment
 
 @Keep
@@ -18,7 +19,9 @@ interface FormbricksCallback {
     fun onSurveyStarted()
     fun onSurveyFinished()
     fun onSurveyClosed()
+    fun onPageCommitVisible()
     fun onError(error: Exception)
+    fun onSuccess(successType: SuccessType)
 }
 
 @Keep
@@ -53,8 +56,8 @@ object Formbricks {
      * ```
      *
      */
-    fun setup(context: Context, config: FormbricksConfig) {
-        if (isInitialized) {
+    fun setup(context: Context, config: FormbricksConfig, forceRefresh: Boolean = false) {
+        if (isInitialized && !forceRefresh) {
             val error = SDKError.sdkIsAlreadyInitialized
             callback?.onError(error)
             Logger.e(error)
@@ -67,13 +70,12 @@ object Formbricks {
         environmentId = config.environmentId
         loggingEnabled = config.loggingEnabled
         fragmentManager = config.fragmentManager
-
         config.userId?.let { UserManager.set(it) }
         config.attributes?.let { UserManager.setAttributes(it) }
         config.attributes?.get("language")?.let { UserManager.setLanguage(it) }
 
         FormbricksApi.initialize()
-        SurveyManager.refreshEnvironmentIfNeeded()
+        SurveyManager.refreshEnvironmentIfNeeded(force = forceRefresh)
         UserManager.syncUserStateIfNeeded()
 
         isInitialized = true
@@ -201,6 +203,7 @@ object Formbricks {
             return
         }
 
+        callback?.onSuccess(SuccessType.LOGOUT_SUCCESS)
         UserManager.logout()
     }
 
